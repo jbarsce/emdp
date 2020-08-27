@@ -61,6 +61,7 @@ class MDP(Env):
         :param action: An integer representing the action taken.
         :return:
         """
+        action = int(action)
         if self.done:
             raise EpisodeDoneError('The episode has terminated. Use .reset() to restart the episode.')
         if action >= self.action_space or not isinstance(action, int):
