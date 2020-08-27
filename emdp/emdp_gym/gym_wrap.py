@@ -12,7 +12,7 @@ def gymify(mdp, **kwargs):
 
 class GymToMDP(gym.Env):
 
-    def __init__(self, mdp, observation_one_hot=True):
+    def __init__(self, mdp, observation_one_hot=True, cutoff_time=100000):
         """
         :param mdp: The emdp.MDP object to wrap.
         :param observation_one_hot: Boolean indicating if the observation space
@@ -29,11 +29,16 @@ class GymToMDP(gym.Env):
 
         self._obs_one_hot = observation_one_hot
 
+        self.n_steps = 0
+        self.cutoff_time = cutoff_time
+
     def reset(self):
         return self.maybe_convert_state(self.mdp.reset())
 
     def step(self, action):
         state, reward, done, info = self.mdp.step(action)
+        self.n_steps += 1
+        done = done or self.n_steps > self.cutoff_time
 
         return (self.maybe_convert_state(state),
                 reward, done, info)
