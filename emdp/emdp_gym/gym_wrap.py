@@ -5,8 +5,10 @@ from gym import spaces
 
 import emdp.utils as utils
 
+
 def gymify(mdp, **kwargs):
     return GymToMDP(mdp, **kwargs)
+
 
 class GymToMDP(gym.Env):
 
@@ -19,7 +21,7 @@ class GymToMDP(gym.Env):
         self.mdp = mdp
         if observation_one_hot:
             self.observation_space = spaces.Box(
-                low=0, high=1, shape=(self.mdp.state_space, ), dtype=np.int32)
+                low=0, high=1, shape=(self.mdp.state_space,), dtype=np.int32)
         else:
             self.observation_space = spaces.Discrete(self.mdp.state_space)
 
@@ -32,7 +34,7 @@ class GymToMDP(gym.Env):
 
     def step(self, action):
         state, reward, done, info = self.mdp.step(action)
-        
+
         return (self.maybe_convert_state(state),
                 reward, done, info)
 
@@ -48,5 +50,3 @@ class GymToMDP(gym.Env):
             return state
         else:
             return utils.convert_onehot_to_int(state)
-
-
