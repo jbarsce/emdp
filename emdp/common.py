@@ -2,10 +2,12 @@ import numpy as np
 from . import utils
 from .exceptions import InvalidActionError, EpisodeDoneError
 
+
 class Env(object):
     """
     Abstract Environment wrapper.
     """
+
     def __init__(self, seed):
         """
         :param seed: A seed for the random number generator.
@@ -14,6 +16,7 @@ class Env(object):
 
     def set_seed(self, seed):
         self.rng = np.random.RandomState(seed)
+
 
 class MDP(Env):
     def __init__(self, P, R, gamma, p0, terminal_states, seed=1337, skip_check=False):
@@ -29,14 +32,17 @@ class MDP(Env):
         :param seed: the random seed for simulations.
         """
         super().__init__(seed)
-        if not skip_check: assert np.allclose(P.sum(axis=2), 1), 'Transition matrix does not seem to be a stochastic matrix ' \
-                                           '(i.e. the sum over states for each action doesn not equal 1'
+        if not skip_check: assert np.allclose(P.sum(axis=2),
+                                              1), 'Transition matrix does not seem to be a stochastic matrix ' \
+                                                  '(i.e. the sum over states for each action doesn not equal 1'
         self.P = P
         self.R = R
         self.state_space = P.shape[0]
         self.action_space = R.shape[1]
-        if not skip_check: assert self.state_space == P.shape[2], '3rd Dimension of Transition Matrix is not of size |S|'
-        if not skip_check: assert self.action_space == P.shape[1], '2nd Dimension of Transition Matrix is not of size |A|'
+        if not skip_check: assert self.state_space == P.shape[
+            2], '3rd Dimension of Transition Matrix is not of size |S|'
+        if not skip_check: assert self.action_space == P.shape[
+            1], '2nd Dimension of Transition Matrix is not of size |A|'
         if not skip_check: assert self.state_space == R.shape[0], '1st Dimesnion of Reward Matrix is not of size |S|'
         self.gamma = gamma
         if not skip_check: assert self.state_space == p0.shape[0], 'Distribution over initial states is not over |S|'
@@ -65,7 +71,8 @@ class MDP(Env):
         if self.done:
             raise EpisodeDoneError('The episode has terminated. Use .reset() to restart the episode.')
         if action >= self.action_space or not isinstance(action, int):
-            raise InvalidActionError('Invalid action {}. It must be an integer between 0 and {}'.format(action, self.action_space-1))
+            raise InvalidActionError(
+                'Invalid action {}. It must be an integer between 0 and {}'.format(action, self.action_space - 1))
 
         # we end from this episode onwards.
         # this check is done after entering terminal state
@@ -85,4 +92,4 @@ class MDP(Env):
 
         self.current_state = utils.convert_int_rep_to_onehot(sampled_next_state, self.state_space)
 
-        return self.current_state, reward, self.done, {'gamma':self.gamma}
+        return self.current_state, reward, self.done, {'gamma': self.gamma}
