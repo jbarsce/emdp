@@ -29,7 +29,7 @@ class GymToMDP(gym.Env):
 
         self._obs_one_hot = observation_one_hot
 
-        self.n_steps = 0
+        self.episode_steps = 0
         self.cutoff_time = cutoff_time
 
     def reset(self):
@@ -37,8 +37,10 @@ class GymToMDP(gym.Env):
 
     def step(self, action):
         state, reward, done, info = self.mdp.step(action)
-        self.n_steps += 1
-        done = done or self.n_steps > self.cutoff_time
+        self.episode_steps += 1
+
+        done = done or self.episode_steps > self.cutoff_time
+        self.episode_steps = 0 if done else self.episode_steps
 
         return (self.maybe_convert_state(state),
                 reward, done, info)
