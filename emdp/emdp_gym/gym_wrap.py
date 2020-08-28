@@ -12,7 +12,7 @@ def gymify(mdp, **kwargs):
 
 class GymToMDP(gym.Env):
 
-    def __init__(self, mdp, observation_one_hot=True, cutoff_time=100000):
+    def __init__(self, mdp, cutoff_time=100000, observation_one_hot=True):
         """
         :param mdp: The emdp.MDP object to wrap.
         :param observation_one_hot: Boolean indicating if the observation space
